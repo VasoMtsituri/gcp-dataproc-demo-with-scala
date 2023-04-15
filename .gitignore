@@ -1,2 +1,7 @@
 *.class
 *.log
+
+.idea
+lib
+GCP_DATAPROC_DEMO_WITH_SCALA/GCP_DATAPROC_DEMO_WITH_SCALA.iml
+out/
