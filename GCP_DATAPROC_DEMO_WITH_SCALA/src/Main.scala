@@ -7,18 +7,10 @@ object Main extends App{
     .appName("SparkByExample")
     .getOrCreate();
 
-  println("First SparkContext:")
-  println("APP Name :"+spark.sparkContext.appName);
-  println("Deploy Mode :"+spark.sparkContext.deployMode);
-  println("Master :"+spark.sparkContext.master);
+  val filePath = "/home/vaso/Downloads/nyc_tlc_yellow_trips_2018_subset_1.csv"
+  val fileRDD = spark.sparkContext.textFile(filePath)
 
-  val sparkSession2 = SparkSession.builder()
-    .master("local[1]")
-    .appName("SparkByExample-test")
-    .getOrCreate();
+  println("Number of rows: " + fileRDD.count())
 
-  println("Second SparkContext:")
-  println("APP Name :"+sparkSession2.sparkContext.appName);
-  println("Deploy Mode :"+sparkSession2.sparkContext.deployMode);
-  println("Master :"+sparkSession2.sparkContext.master);
+  fileRDD.take(20).foreach(println)
 }
