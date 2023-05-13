@@ -1,7 +1,7 @@
 package dataproc.codelab
 
 import java.io.{BufferedWriter, FileWriter}
-
+import scala.collection.JavaConversions._
 import org.apache.spark._
 import org.apache.log4j._
 
@@ -22,7 +22,7 @@ object FriendsByAge {
     (age, numOfFriends)
   }
 
-  def generateFakeSocNetData(outputFilePath: String, numOfRows: Int, maxAge: Int, maxNumOfFriends: Int) = {
+  def generateFakeSocNetData(outputFilePath: String, numOfRows: Int, maxAge: Int, maxNumOfFriends: Int): Unit = {
     val csvFields = Array("ID", "Name", "Age", "NumOfFriends")
 
     val rand = new Random
@@ -34,7 +34,7 @@ object FriendsByAge {
     var listOfRecords = new ListBuffer[Array[String]]()
     listOfRecords += csvFields
     for (i <- 1 to numOfRows) {
-      listOfRecords += Array(i.toString, names(rand.nextInt(names.length)), randomAges(rand.nextInt(randomAges.length)).toString, randomNumOfFriends(rand.nextInt(randomNumOfFriends.length)))
+      listOfRecords += Array(i.toString, names(rand.nextInt(names.length)), randomAges(rand.nextInt(randomAges.length)).toString, randomNumOfFriends(rand.nextInt(randomNumOfFriends.length)).toString)
     }
 
     val outputFile = new BufferedWriter(new FileWriter(outputFilePath))
@@ -42,6 +42,11 @@ object FriendsByAge {
 
     csvWriter.writeAll(listOfRecords.toList)
     outputFile.close()
+  }
+
+
+  def main(args: Array[String]): Unit = {
+    generateFakeSocNetData(outputFilePath =  "1.csv", numOfRows = 10, maxAge = 80, maxNumOfFriends = 1000)
   }
 
 }
