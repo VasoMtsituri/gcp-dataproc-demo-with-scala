@@ -46,7 +46,29 @@ object FriendsByAge {
 
 
   def main(args: Array[String]): Unit = {
-    generateFakeSocNetData(outputFilePath =  "1.csv", numOfRows = 10, maxAge = 80, maxNumOfFriends = 1000)
-  }
+    // generateFakeSocNetData(outputFilePath =  "1.csv", numOfRows = 10, maxAge = 80, maxNumOfFriends = 1000)
 
+    Logger.getLogger("codelab").setLevel(Level.ERROR)
+
+    val sc = new SparkContext("local[*]", "FriendsByAge")
+
+    val lines = sc.textFile("1.csv")
+
+    // User our parseLine function to convert to (age, numOfFriends) tuples
+    val rdd = lines.map(parseLine)
+
+    // We're starting with an RDD of form (age, numOfFriends) where age is the KEY and numOfFriends is the VALUE
+    // We use mapValues to convert each numOfFriends value to tuple (numOfFriends, 1) then we use
+    // reduceByKey to sum up the total numOfFriends and total instances for each age, by adding together all the
+    // numOfFriends values and 1's respectively
+    val totalsByAge = rdd.mapValues(x => (x, 1)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2))
+
+    // So now we have tuples of (age, (totalFriends, totalInstances)).
+    // To compute the average we divide totalFriends / totalInstances for each age
+    val averageByAge = totalsByAge.mapValues(x => x._1 / x._2)
+
+    val results = averageByAge.collect()
+
+    results.sorted.foreach(println)
+  }
 }
